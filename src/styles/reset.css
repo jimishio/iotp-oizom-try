@@ -1,0 +1,33 @@
+/*
+ * reset the default user-agent styles
+ */
+html, body, div, h1, h2, h3, h4, p,
+span, strong, a, img, b, u, i, canvas
+dl, dt, dd, ol, ul, li,
+table, thead, tbody, tr, th, td,
+artile, aside, details, figcaption, figure,
+footer, header, main, mark, nav, section, summary, time {
+	margin: 0px;
+	border: 0px;
+	padding: 0px;
+	font: inherit;
+	font-size: 100%;
+	vertical-align: baseline;
+}
+body {
+	line-height: 1;
+}
+form select {
+	font: inherit;
+	font-size: 90%;
+}
+ul {
+	list-style: none;
+}
+table {
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+aside, header {
+	display: block;
+}

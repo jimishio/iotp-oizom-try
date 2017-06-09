@@ -1,0 +1,142 @@
+<div class="container-50 noTopPadding container-30-right">
+    <div class="floatLeft">
+        <h4>Total Devices Registered</h4>
+
+        <span class="lightBlue" style="font-size: 45px; font-weight: 700;">
+            {{totalDevices || "--"}}
+        </span>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+
+<div *ngIf="this.devices !== undefined && this.devices.length > 0" class="container-50 paddingTop">
+      <div class="floatRight">
+        <!--<a href="#">Manage Devices</a>-->
+      </div>
+      
+      <div class="dashItem" ng-if="$ctrl.regions">
+        <div class="dashTitleBar">
+            <h3>Live Data Connection {{mqttStatus ? '✅' : '❌'}}</h3>
+        </div>
+
+        <div class="bx--responsive-table-container" style="width: 100%;" data-responsive-table>
+            <table class="bx--responsive-table bx--responsive-table--static-size" style="width: 100%;" data-table>
+                <thead class="bx--table-head">
+                    <tr class="bx--table-row">
+                        <th class="bx--table-header">
+                            <span>#</span>
+                        </th>
+
+                        <th class="bx--table-header bx--table-sort" data-event="sort" (click)="revertSort();">
+                            Device ID
+
+                            <svg class="bx--table-sort__svg">
+                                <use *ngIf="orderBy[0] === '-'" xlink:href="/assets/img/carbon-icons.svg#icon--caret--down"></use>
+
+                                <use *ngIf="orderBy[0] !== '-'" xlink:href="/assets/img/carbon-icons.svg#icon--caret--up"></use>
+                            </svg>
+                        </th>
+                        
+                        <th class="bx--table-header">
+                            RPM
+                        </th>
+                        
+                        <th class="bx--table-header">
+                            State
+                        </th>
+                        
+                        <th class="bx--table-header">
+                            Last Event
+                        </th>
+                        
+                        <th class="bx--table-header">
+                            Auto Refresh
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody class="bx--table-body">
+                    <tr class="bx--table-row bx--parent-row" data-parent-row *ngFor="let device of devices; let i = index;">
+                        <td>{{(currentPage-1)*limit+(i + 1)}}</td>
+                        <td>{{device.deviceId}}</td>
+                        <td class="align-right">{{device.data !== undefined ? device.data.rpm : "--"}}</td>
+                        <td class="align-right">{{device.data !== undefined ? (device.data.running ? "Running" : "Stopped") : "--"}}</td>
+                        <td class="align-right">{{device.data !== undefined ? (device.data.ts | date:'medium') : "--"}}</td>
+                        <td class="align-right">
+                            <div class="bx--form-item bx--checkbox-wrapper">
+                                <input id="bx--checkbox-{{i}}" class="bx--checkbox" type="checkbox" value="red" name="checkbox"
+                                       [(ngModel)]="mqttStatus && liveData[device.deviceId]" [disabled]="!mqttStatus"
+                                       (change)="setLiveData(i, $event.target.checked === true ? true : false);">
+
+                                <label for="bx--checkbox-{{i}}" class="bx--checkbox-label">
+                                    <span class="bx--checkbox-appearance">
+                                        <svg class="bx--checkbox-checkmark">
+                                            <use xlink:href="/assets/img/carbon-icons.svg#icon--checkmark"></use>
+                                        </svg>
+                                    </span>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="bx--pagination" data-pagination *ngIf="totalDevices > 10">
+            <div class="bx--pagination__left">
+                <div class="bx--select">
+                <label for="select-id" class="bx--visually-hidden">Number of items per page</label>
+                <select id="select-id" class="bx--select-input" [(ngModel)]="limit" (change)="getDevices();" data-items-per-page>
+                    <option class="bx--select-option" value="10" selected>10</option>
+                    <option class="bx--select-option" value="20">20</option>
+                    <option class="bx--select-option" value="30">30</option>
+                    <option class="bx--select-option" value="40">40</option>
+                    <option class="bx--select-option" value="50">50</option>
+                </select>
+                <svg class="bx--select__arrow">
+                    <use xlink:href="/carbon-icons/bluemix-icons.svg#icon--caret--down"></use>
+                </svg>
+                </div>
+                <span class="bx--pagination__text">Items per page&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+                <span class="bx--pagination__text"><span data-displayed-item-range>{{(currentPage-1)*limit+1}}-{{currentPage === totalPages ? totalDevices : sum(limit, (currentPage-1)*limit)}}</span> of <span data-total-items>{{totalDevices}}</span> items</span>
+            </div>
+            <div class="bx--pagination__right">
+                <span class="bx--pagination__text">
+                    <span data-displayed-page-number>{{currentPage}}</span> of <span data-total-pages>{{totalPages}}</span> {{totalPages > 1 ? 'pages' : 'page'}}
+                </span>
+                
+                <button class="bx--pagination__button bx--pagination__button--backward" data-page-backward aria-label="Backward button"
+                        (click)="prevPage();" [disabled]="currentPage === 1">
+                    <svg class="bx--pagination__button-icon">
+                        <use xlink:href="/carbon-icons/bluemix-icons.svg#icon--chevron--left"></use>
+                    </svg>
+                </button>
+                
+                <label for="page-number-input" class="bx--visually-hidden">Page number input</label>
+                <input id="page-number-input" type="text" class="bx--text-input" placeholder="0" [value]="currentPage" disabled data-page-number-input>
+                
+                <button class="bx--pagination__button bx--pagination__button--forward" data-page-forward aria-label="Forward button"
+                        (click)="nextPage();" [disabled]="limit >= totalDevices || currentPage === totalPages">
+                    <svg class="bx--pagination__button-icon">
+                        <use xlink:href="/carbon-icons/bluemix-icons.svg#icon--chevron--right"></use>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-50 paddingTop">
+    <strong *ngIf="this.devices !== undefined && this.devices.length === 0">
+        No Devices Found
+    </strong>
+
+    <strong *ngIf="this.devices === undefined && errorMessage === undefined">
+        Loading Devices...
+    </strong>
+
+    <strong *ngIf="this.devices === undefined && errorMessage !== undefined">
+        Something went wrong!
+    </strong>
+</div>

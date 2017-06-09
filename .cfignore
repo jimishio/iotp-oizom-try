@@ -1,0 +1,50 @@
+# For more about ignoring files, see the following links:
+# https://docs.cloudfoundry.org/devguide/deploy-apps/prepare-to-deploy.html#exclude and
+# http://help.github.com/ignore-files/
+
+# compiled output
+/dist
+/tmp
+
+# dependencies
+/node_modules
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage/*
+/libpeerconnection.log
+npm-debug.log
+testem.log
+/typings
+
+# e2e
+/e2e/*.js
+/e2e/*.map
+
+#System Files
+.DS_Store
+Thumbs.db
+node_modules/
+README.md
+.github/
+.git/
+.gitignore
+logs
+*.log
