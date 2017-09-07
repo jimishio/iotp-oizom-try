@@ -11,7 +11,8 @@ export class IBMIoTPService {
     
     // Endpoint URLs
     private baseURL: string =           `/api`;
-    private devicesURL: string =        `/device/types/${this.deviceType}/devices`;
+    //private devicesURL: string =        `/device/types/${this.deviceType}/devices`;
+    private devicesURL: string =       `/device/types/POLLUDRON/devices`;
     private statusURL: string =        `/service-status`;
     private lastCachedEventURL: string = `/device/types/${this.deviceType}/devices/{deviceId}/events/sensorData`
 
