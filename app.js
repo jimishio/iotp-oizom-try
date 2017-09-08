@@ -87,9 +87,7 @@ appClient.on("connect", function () {
 
   if (devicesToSubscribeTo.length > 0) {
     for (deviceId of devicesToSubscribeTo) {
-      appClient.subscribeToDeviceEvents("iot-conveyor-belt", deviceId, "sensorData", "json");
-
-      console.log(`Subscribed to ${deviceId}`);
+      console.log(appClient.subscribeToDeviceEvents());  
     }
 
     devicesToSubscribeTo = [];
@@ -108,7 +106,7 @@ appClient.on("disconnect", function () {
 appClient.on("deviceEvent", function (deviceType, deviceId, eventType, format, payload) {
     console.log("Device Event from :: " + deviceType + " : " + deviceId + " of event " + eventType + " with payload : " + payload);
 
-    io.emit('message', {type: 'new_sensorData', text: payload.toString()});
+    io.emit('message', {type: 'new_sensorData', text: payload.toString(), id:deviceId});
 });
 
 function mqttConnect() {
@@ -187,8 +185,8 @@ io.on('connection', (socket) => {
     if (appClient.isConnected) {
       console.log((payload.turnOn ? '' : 'Un-') + 'Subscribed' + (payload.turnOn ? ' to ' : ' from ') + `${payload.deviceId}`);
 
-      if (payload.turnOn)   appClient.subscribeToDeviceEvents("iot-conveyor-belt", payload.deviceId, "sensorData", "json");
-      else                  appClient.unsubscribeToDeviceEvents("iot-conveyor-belt", payload.deviceId, "sensorData", "json");
+      if (payload.turnOn)   appClient.subscribeToDeviceEvents();
+      else                  appClient.unsubscribeToDeviceEvents();
     } else if (!appClient.isConnected && payload.turnOn) {
       devicesToSubscribeTo.push(payload);
     }
