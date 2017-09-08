@@ -17,24 +17,24 @@ export class StatusComponent implements OnInit {
 
   constructor (private ibmIoTP: IBMIoTPService) {}
 
-  ngOnInit() {
-    this.ibmIoTP.getStatus().then(
-          iotpStatus => {
-            console.log("Status:", iotpStatus);
+  ngOnInit() {  
+    // this.ibmIoTP.getStatus().then(
+    //       iotpStatus => {
+    //         console.log("Status:", iotpStatus);
 
-            var keys = Object.keys(iotpStatus);
-            if (keys.length > 0) {
-                this.iotpStatus = iotpStatus[keys[0]];
+    //         var keys = Object.keys(iotpStatus);
+    //         if (keys.length > 0) {
+    //             this.iotpStatus = iotpStatus[keys[0]];
 
-                this.iotpStatusKeys = Object.keys(this.iotpStatus);
-            } else {
-                this.iotpStatus = [];
+    //             this.iotpStatusKeys = Object.keys(this.iotpStatus);
+    //         } else {
+    //             this.iotpStatus = [];
 
-                this.iotpStatusKeys = [];
-            }
+    //             this.iotpStatusKeys = [];
+    //         }
             
-          },
-          error =>  this.errorMessage = <any>error);
+    //       },
+    //       error =>  this.errorMessage = <any>error);
   }
 
   cleanCamelCase(text: string) {

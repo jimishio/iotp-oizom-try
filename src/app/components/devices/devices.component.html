@@ -38,15 +38,11 @@
                         </th>
 
                         <th class="bx--table-header">
-                            State
+                            Registered On
                         </th>
 
                         <th class="bx--table-header">
-                            Last Event
-                        </th>
-
-                        <th class="bx--table-header">
-                            Auto Refresh
+                            Activate
                         </th>
                     </tr>
                 </thead>
@@ -57,8 +53,8 @@
                       <td>{{(currentPage-1)*limit+(i + 1)}}</td>
                         <td>{{device.deviceId}}</td>
 
-                        <td class="align-right">{{device.data !== undefined ? (device.data.running ? "Running" : "Stopped") : "--"}}</td>
-                        <td class="align-right">{{displayTime(device.status.alert.timestamp)}}</td>
+                        
+                        <td class="align-right">{{displayTime(device.registration.date)}}</td>
                         <td class="align-right">
                             <div class="bx--form-item bx--checkbox-wrapper">
                                 <input id="bx--checkbox-{{i}}" class="bx--checkbox" type="checkbox" value="red" name="checkbox"

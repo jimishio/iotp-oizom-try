@@ -190,7 +190,7 @@ io.on('connection', (socket) => {
       if (payload.turnOn)   appClient.subscribeToDeviceEvents("iot-conveyor-belt", payload.deviceId, "sensorData", "json");
       else                  appClient.unsubscribeToDeviceEvents("iot-conveyor-belt", payload.deviceId, "sensorData", "json");
     } else if (!appClient.isConnected && payload.turnOn) {
-      devicesToSubscribeTo.push(payload.deviceId);
+      devicesToSubscribeTo.push(payload);
     }
   });
 });

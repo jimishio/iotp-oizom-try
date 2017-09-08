@@ -7,14 +7,14 @@ import 'rxjs/add/operator/toPromise';
 @Injectable()
 export class IBMIoTPService {
     // https://docs.internetofthings.ibmcloud.com/swagger/v0002.html
-    private deviceType: string  =   "POLLUDRON";
+    private deviceType: string  =     "POLLUDRON";
 
     // Endpoint URLs
     private baseURL: string =           `/api`;
     //private devicesURL: string =        `/device/types/${this.deviceType}/devices`;
     private devicesURL: string =       `/device/types/POLLUDRON/devices`;
-    private statusURL: string =        `/service-status`;
-    private lastCachedEventURL: string = `/device/types/${this.deviceType}/devices/{deviceId}/events/sensorData`
+    // private statusURL: string =        `/service-status`;
+    // private lastCachedEventURL: string = `/device/types/${this.deviceType}/devices/{deviceId}/events/sensorData`
 
     constructor(private http: Http) {}
 
@@ -32,24 +32,24 @@ export class IBMIoTPService {
                 .catch(this.handleError);
     }
 
-    getStatus(): Promise<Object> {
-        let url = this.baseURL.concat(this.statusURL);
+    // getStatus(): Promise<Object> {
+    //     let url = this.baseURL.concat(this.statusURL);
 
-        return this.http.get(url)
-                .toPromise()
-                .then(response => response.json())
-                .catch(this.handleError);
-    }
+    //     return this.http.get(url)
+    //             .toPromise()
+    //             .then(response => response.json())
+    //             .catch(this.handleError);
+    // }
 
-    getLastCachedEvent(deviceID: string): Promise<Object> {
-        let url = this.baseURL.concat(this.lastCachedEventURL.replace("{deviceId}", deviceID));
+    // getLastCachedEvent(deviceID: string): Promise<Object> {
+    //     let url = this.baseURL.concat(this.lastCachedEventURL.replace("{deviceId}", deviceID));
 
-        console.log(url)
-        return this.http.get(url)
-                .toPromise()
-                .then(response => response.json())
-                .catch(this.handleError);
-    }
+    //     console.log(url)
+    //     return this.http.get(url)
+    //             .toPromise()
+    //             .then(response => response.json())
+    //             .catch(this.handleError);
+    // }
 
     private handleError(error: any): Promise<any> {
         console.error('An error occurred', error); // for demo purposes only

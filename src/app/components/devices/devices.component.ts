@@ -95,22 +95,22 @@ export class DevicesComponent implements OnInit {
         this.bookmarks[this.currentPage] = devices["bookmark"];
 
         // Get last cached event for all devices loaded
-        var index = 0;
-        for (let device of this.devices) {
-            this.ibmIoTP.getLastCachedEvent(device.deviceId).then(
-              eventData => {
-                console.log("Event:", atob(eventData["payload"]));
+        // var index = 0;
+        // for (let device of this.devices) {
+        //     this.ibmIoTP.getLastCachedEvent(device.deviceId).then(
+        //       eventData => {
+        //         console.log("Event:", atob(eventData["payload"]));
 
-                device["data"] = JSON.parse(atob(eventData["payload"]))["d"];
-              }, error =>  this.errorMessage = <any>error);
+        //         device["data"] = JSON.parse(atob(eventData["payload"]))["d"];
+        //       }, error =>  this.errorMessage = <any>error);
 
-            // Only runs this code when the page is loading for the first time
-            if (!this.liveDataSubscribedOnInit && index < 5) {
-              this.setLiveData(index, true);
+        //     // Only runs this code when the page is loading for the first time
+        //     if (!this.liveDataSubscribedOnInit && index < 5) {
+        //       this.setLiveData(index, true);
 
-              index += 1;
-            }
-        }
+        //       index += 1;
+        //     }
+        // }
 
         this.liveDataSubscribedOnInit = true;
       }, error =>  this.errorMessage = <any>error);
@@ -128,7 +128,7 @@ export class DevicesComponent implements OnInit {
    * @returns Time in human readable format
    */
   displayTime(time:string): string {
-    return (time ? moment.utc(time).utcOffset("+05:30").format("DD MMM, h:mm A") : "No data available");
+    return (time ? moment.utc(time).utcOffset("+05:30").format("DD MMM YYYY, h:mm A") : "No data available");
   }
 
   sum(a, b) {
