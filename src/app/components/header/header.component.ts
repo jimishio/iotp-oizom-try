@@ -7,8 +7,8 @@ import { Component } from '@angular/core';
         <div class="container noTopPadding">
             <div class="floatLeft productTitle productTitleWide">
                 <a [routerLink]="['/']">
-                <img src="assets/img/iotp.png" class="floatLeft" style="width: 30px; margin-right: 15px; margin-top: 9px;">
-                Plant Floor Monitor - <strong>Conveyor Status</strong>
+                <img src="assets/img/oizom-about_org.png" class="floatLeft" style="width: 50px; margin-right: 15px; margin-top: 9px;">
+                Oizom Devices Monitor - <strong>Devices Status</strong>
                 </a>
             </div>
             

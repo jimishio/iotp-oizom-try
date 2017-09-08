@@ -7,8 +7,8 @@ import 'rxjs/add/operator/toPromise';
 @Injectable()
 export class IBMIoTPService {
     // https://docs.internetofthings.ibmcloud.com/swagger/v0002.html
-    private deviceType: string  =   "iot-conveyor-belt";
-    
+    private deviceType: string  =   "POLLUDRON";
+
     // Endpoint URLs
     private baseURL: string =           `/api`;
     //private devicesURL: string =        `/device/types/${this.deviceType}/devices`;
@@ -25,7 +25,7 @@ export class IBMIoTPService {
         params.set('_limit',    requestParams ? requestParams.limit    : '10');
         params.set('_sort',     requestParams ? requestParams.orderBy  : 'deviceId');
         params.set('_bookmark', requestParams ? requestParams.bookmark : '');
-        
+
         return this.http.get(url, {params: params})
                 .toPromise()
                 .then(response => response.json())
@@ -44,6 +44,7 @@ export class IBMIoTPService {
     getLastCachedEvent(deviceID: string): Promise<Object> {
         let url = this.baseURL.concat(this.lastCachedEventURL.replace("{deviceId}", deviceID));
 
+        console.log(url)
         return this.http.get(url)
                 .toPromise()
                 .then(response => response.json())

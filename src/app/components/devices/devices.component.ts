@@ -1,7 +1,7 @@
 import { Component, OnInit }    from '@angular/core';
 import { IBMIoTPService }       from '../../services/iotp/ibmIoTP.service';
 import { LiveDataService }      from '../../services/livedata/liveData.service';
-
+import * as moment from "moment";
 // Carbon Design Framework
 import { DataTable }            from 'carbon-components';
 import { Checkbox }             from 'carbon-components';
@@ -32,7 +32,7 @@ export class DevicesComponent implements OnInit {
   currentPage   : number = 1;
   totalPages    : number = 0;
 
-  
+
   // Live Data
   connection;
   liveData = {};
@@ -52,7 +52,7 @@ export class DevicesComponent implements OnInit {
 
         var payload     = JSON.parse(message["text"])["d"];
         const deviceId  = payload["id"];
-        
+
         for (let device of this.devices) {
           if (device.deviceId === deviceId) {
             device["data"] = payload;
@@ -62,7 +62,7 @@ export class DevicesComponent implements OnInit {
         this.mqttStatus = message["text"].connected;
       }
     });
-    
+
     this.getDevices();
 
     this.mqttStatusInquiry();
@@ -90,7 +90,7 @@ export class DevicesComponent implements OnInit {
 
         this.totalDevices = devices["meta"].total_rows;
         this.totalPages   = Math.ceil(this.totalDevices / this.limit);
-        
+
         this.bookmark     = devices["bookmark"];
         this.bookmarks[this.currentPage] = devices["bookmark"];
 
@@ -103,7 +103,7 @@ export class DevicesComponent implements OnInit {
 
                 device["data"] = JSON.parse(atob(eventData["payload"]))["d"];
               }, error =>  this.errorMessage = <any>error);
-            
+
             // Only runs this code when the page is loading for the first time
             if (!this.liveDataSubscribedOnInit && index < 5) {
               this.setLiveData(index, true);
@@ -120,6 +120,15 @@ export class DevicesComponent implements OnInit {
     this.orderBy = (this.orderBy.charAt(0) !== '-') ? ("-" + this.orderBy) : (this.orderBy.substring(1));
 
     this.getDevices();
+  }
+
+  /**
+   * Display time in human format
+   * @param {number} time Time from server from time stamp
+   * @returns Time in human readable format
+   */
+  displayTime(time:string): string {
+    return (time ? moment.utc(time).utcOffset("+05:30").format("DD MMM, h:mm A") : "No data available");
   }
 
   sum(a, b) {
@@ -157,10 +166,10 @@ export class DevicesComponent implements OnInit {
       deviceId: this.devices[index].deviceId,
       turnOn: this.liveData[deviceId]
     };
-    
+
     this.liveDataService.sendMessage('mqtt_set', JSON.stringify(socketData));
   }
-  
+
   ngOnDestroy() {
     this.connection.unsubscribe();
   }

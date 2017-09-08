@@ -14,7 +14,6 @@
       <div class="floatRight">
         <!--<a href="#">Manage Devices</a>-->
       </div>
-      
       <div class="dashItem" ng-if="$ctrl.regions">
         <div class="dashTitleBar">
             <h3>Live Data Connection {{mqttStatus ? '✅' : '❌'}}</h3>
@@ -37,32 +36,29 @@
                                 <use *ngIf="orderBy[0] !== '-'" xlink:href="/assets/img/carbon-icons.svg#icon--caret--up"></use>
                             </svg>
                         </th>
-                        
-                        <th class="bx--table-header">
-                            RPM
-                        </th>
-                        
+
                         <th class="bx--table-header">
                             State
                         </th>
-                        
+
                         <th class="bx--table-header">
                             Last Event
                         </th>
-                        
+
                         <th class="bx--table-header">
                             Auto Refresh
                         </th>
                     </tr>
                 </thead>
 
+
                 <tbody class="bx--table-body">
                     <tr class="bx--table-row bx--parent-row" data-parent-row *ngFor="let device of devices; let i = index;">
-                        <td>{{(currentPage-1)*limit+(i + 1)}}</td>
+                      <td>{{(currentPage-1)*limit+(i + 1)}}</td>
                         <td>{{device.deviceId}}</td>
-                        <td class="align-right">{{device.data !== undefined ? device.data.rpm : "--"}}</td>
+
                         <td class="align-right">{{device.data !== undefined ? (device.data.running ? "Running" : "Stopped") : "--"}}</td>
-                        <td class="align-right">{{device.data !== undefined ? (device.data.ts | date:'medium') : "--"}}</td>
+                        <td class="align-right">{{displayTime(device.status.alert.timestamp)}}</td>
                         <td class="align-right">
                             <div class="bx--form-item bx--checkbox-wrapper">
                                 <input id="bx--checkbox-{{i}}" class="bx--checkbox" type="checkbox" value="red" name="checkbox"
@@ -105,17 +101,14 @@
                 <span class="bx--pagination__text">
                     <span data-displayed-page-number>{{currentPage}}</span> of <span data-total-pages>{{totalPages}}</span> {{totalPages > 1 ? 'pages' : 'page'}}
                 </span>
-                
                 <button class="bx--pagination__button bx--pagination__button--backward" data-page-backward aria-label="Backward button"
                         (click)="prevPage();" [disabled]="currentPage === 1">
                     <svg class="bx--pagination__button-icon">
                         <use xlink:href="/carbon-icons/bluemix-icons.svg#icon--chevron--left"></use>
                     </svg>
                 </button>
-                
                 <label for="page-number-input" class="bx--visually-hidden">Page number input</label>
                 <input id="page-number-input" type="text" class="bx--text-input" placeholder="0" [value]="currentPage" disabled data-page-number-input>
-                
                 <button class="bx--pagination__button bx--pagination__button--forward" data-page-forward aria-label="Forward button"
                         (click)="nextPage();" [disabled]="limit >= totalDevices || currentPage === totalPages">
                     <svg class="bx--pagination__button-icon">
