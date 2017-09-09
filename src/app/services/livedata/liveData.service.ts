@@ -3,7 +3,7 @@ import { Subject } from 'rxjs/Subject';
 import * as io from 'socket.io-client';
 
 export class LiveDataService {
-  private url: string;  
+  private url: string;
   private socket;
 
   constructor() {
@@ -15,13 +15,13 @@ export class LiveDataService {
       this.url = `${wLocation.protocol}//${wLocation.hostname}`;
     }
   }
-  
+
   sendMessage(topic, message){
     console.log("TOPIC: ", topic);
 
     this.socket.emit(topic, message);
   }
-  
+
   getMessages() {
     let observable = new Observable(observer => {
       this.socket = io(this.url);
@@ -33,7 +33,7 @@ export class LiveDataService {
         this.socket.disconnect();
       };
     });
-    
+
     return observable;
-  }  
+  }
 }

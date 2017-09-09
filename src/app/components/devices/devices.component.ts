@@ -47,6 +47,8 @@ export class DevicesComponent implements OnInit {
     this.connection = this.liveDataService.getMessages().subscribe(message => {
       this.messages.push(message);
 
+      console.log(message)
+
       if (message["type"] === "new_sensorData") {
         console.log("TEXT", message["text"]);
 

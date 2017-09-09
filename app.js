@@ -82,14 +82,20 @@ const iot_host    = `wss://${org}.messaging.internetofthings.ibmcloud.com`
 // When the IoT client connects successfully
 appClient.on("connect", function () {
   console.log("IoTF client connected");
-  
+
   console.log(devicesToSubscribeTo);
 
   if (devicesToSubscribeTo.length > 0) {
-    for (deviceId of devicesToSubscribeTo) {
-      appClient.subscribeToDeviceEvents("iot-conveyor-belt", deviceId, "sensorData", "json");
+    for (deviceId in devicesToSubscribeTo) {
+      /** To subscribe to all events from all devices */
+      // appClient.subscribeToDeviceEvents();
 
-      console.log(`Subscribed to ${deviceId}`);
+      /** To subscribe to all events published by a device in json format */
+      appClient.subscribeToDeviceEvents("POLLUDRON_PRO","OZ_POLLUDRON_003","json");
+      appClient.subscribeToDeviceEvents("POLLUDRON_PRO","OZ_POLLUDRON_002","json");
+
+      // console.log(appClient.subscribeToDeviceEvents());
+      // console.log(appClient.subscribeToDeviceEvents("POLLUDRON","OZ_POLLUDRON_118","+","json"));
     }
 
     devicesToSubscribeTo = [];
@@ -108,7 +114,8 @@ appClient.on("disconnect", function () {
 appClient.on("deviceEvent", function (deviceType, deviceId, eventType, format, payload) {
     console.log("Device Event from :: " + deviceType + " : " + deviceId + " of event " + eventType + " with payload : " + payload);
 
-    io.emit('message', {type: 'new_sensorData', text: payload.toString()});
+    // io.emit('data', appClient.subscribeToDeviceEvents());
+    io.emit('message', {type: 'POLLUDRON_PRO', text: payload.toString(), id: deviceId});
 });
 
 function mqttConnect() {
@@ -155,7 +162,7 @@ io.on('connection', (socket) => {
   socketsOpen.push(socket.id);
 
   console.log("Sockets Open: ", socketsOpen);
-  
+
   socket.on('disconnect', function(){
     console.log(`Socket ${socket.id} disconnected`);
 
@@ -166,7 +173,7 @@ io.on('connection', (socket) => {
 
     if (socketsOpen.length === 0) mqttDisconnect();
   });
-  
+
   socket.on('new-data', (message) => {
     console.log("New Data: ", message);
 
@@ -183,14 +190,18 @@ io.on('connection', (socket) => {
     console.log("Set MQTT message: ", message);
 
     var payload = JSON.parse(message);
-    
+
     if (appClient.isConnected) {
       console.log((payload.turnOn ? '' : 'Un-') + 'Subscribed' + (payload.turnOn ? ' to ' : ' from ') + `${payload.deviceId}`);
-
-      if (payload.turnOn)   appClient.subscribeToDeviceEvents("iot-conveyor-belt", payload.deviceId, "sensorData", "json");
-      else                  appClient.unsubscribeToDeviceEvents("iot-conveyor-belt", payload.deviceId, "sensorData", "json");
+        if (payload.turnOn)  {
+          appClient.subscribeToDeviceEvents();
+        }
+        else {
+          appClient.unsubscribeToDeviceEvents();
+        }
     } else if (!appClient.isConnected && payload.turnOn) {
-      devicesToSubscribeTo.push(payload.deviceId);
+      // devicesToSubscribeTo.push(payload.deviceId);
+      devicesToSubscribeTo.push(payload);
     }
   });
 });
