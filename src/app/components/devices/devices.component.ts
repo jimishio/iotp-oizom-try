@@ -31,7 +31,7 @@ export class DevicesComponent implements OnInit {
   orderBy       : string = "deviceId";
   currentPage   : number = 1;
   totalPages    : number = 0;
-
+  livedataDevice : Array<string> = [];
 
   // Live Data
   connection;
@@ -44,12 +44,15 @@ export class DevicesComponent implements OnInit {
   constructor (private ibmIoTP: IBMIoTPService, private liveDataService: LiveDataService) {}
 
   ngOnInit() {
-    this.connection = this.liveDataService.getMessages().subscribe(message => {
+    this.connection = this.liveDataService.getMessages().subscribe(message => {  
+      
       this.messages.push(message);
+
       console.log(message)
 
+
       if (message["type"] === "new_sensorData") {
-        console.log("TEXT", message["text"]);
+        // console.log("TEXT", message["text"]);
 
         var payload     = JSON.parse(message["text"])["d"];
         const deviceId  = payload["id"];
@@ -158,11 +161,14 @@ export class DevicesComponent implements OnInit {
 
     if (turnOn) {
       console.log("Turn ON Live Data for", deviceId);
+      
     } else {
       console.log("Turn OFF Live Data for", deviceId);
     }
 
     this.liveData[deviceId] = turnOn;
+    this.livedataDevice.push(this.liveData[deviceId]);
+    console.log(this.livedataDevice);
 
     const socketData = {
       deviceId: this.devices[index].deviceId,

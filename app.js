@@ -7,7 +7,8 @@ const express         = require('express')
       , iotf          = require('ibmiotf');
 
 var io;
-
+let deviceinfo = "";
+let messages = []
 const app = express();
 
 app.use(bodyParser.json());
@@ -103,11 +104,12 @@ appClient.on("disconnect", function () {
 });
 
 // When there's a new device Event
-appClient.on("deviceEvent", function (deviceType, deviceId, eventType, format, payload) {
-    console.log("Device Event from :: " + deviceType + " : " + deviceId + " of event " + eventType + " with payload : " + payload);
-
-    io.emit('message', {type: 'new_sensorData', text: payload.toString(), id:deviceId});
-});
+// appClient.on("deviceEvent", function (deviceType, deviceId, turnOn, eventType, format, payload) {
+    
+//     console.log("this should work ----->", deviceId)
+//     console.log("Device Event from :: " + deviceType + " : " + deviceId + " of event " + eventType + " with payload : " + payload);
+//     io.emit('message', {type: 'new_sensorData', text: payload.toString(), id:deviceId});
+// });
 
 function mqttConnect() {
   try {
@@ -177,10 +179,18 @@ io.on('connection', (socket) => {
     io.emit('message', {type:'mqtt_status', text: {connected: appClient.isConnected}});
   });
 
+
   socket.on('mqtt_set', (message) => {
     console.log("Set MQTT message: ", message);
 
+    
     var payload = JSON.parse(message);
+    messages.push(JSON.parse(message));
+    deviceinfo = JSON.parse(message);
+    
+
+    console.log(messages)
+
     
     if (appClient.isConnected) {
       console.log((payload.turnOn ? '' : 'Un-') + 'Subscribed' + (payload.turnOn ? ' to ' : ' from ') + `${payload.deviceId}`);
@@ -190,8 +200,31 @@ io.on('connection', (socket) => {
     } else if (!appClient.isConnected && payload.turnOn) {
       devicesToSubscribeTo.push(payload);
     }
-  });
+
+          
+      });
+
+
+  appClient.on("deviceEvent", function (deviceType, deviceId, eventType, format, payload) {
+    console.log("Selected Device -------->",deviceinfo.deviceId);
+    var isAvail = false;
+    messages.forEach(function(obj){
+      if (obj.deviceId == deviceId) isAvail = true; 
+      console.log("deviceId ------->", deviceId);
+    });
+
+    if(isAvail){
+      console.log("THis is payload: ", payload);
+      io.emit('message', {type: 'new_sensorData', text: payload.toString(), id:deviceId});
+    }    
+        });
+      
+
+
+
 });
+
+  
 /* ===== socket.io client --> END ===== */
 
 //Track Deployment
