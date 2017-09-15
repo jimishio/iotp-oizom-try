@@ -183,10 +183,24 @@ io.on('connection', (socket) => {
   socket.on('mqtt_set', (message) => {
     console.log("Set MQTT message: ", message);
 
+    message = JSON.parse(message)
+    var payload = message;
+
+    if(messages.indexOf(message.deviceId) < 0){
+      if(message.turnOn == true){
+        messages.push(message.deviceId);
+      }
+    }
+   
     
-    var payload = JSON.parse(message);
-    messages.push(JSON.parse(message));
-    deviceinfo = JSON.parse(message);
+    
+    if(messages.indexOf(message.deviceId) >= 0){
+      if(message.turnOn == false){
+        messages.splice(messages.indexOf(message.deviceId),1);
+        console.log(message.deviceId + " removed from list");
+        console.log(messages);
+      }
+    }
     
 
     console.log(messages)
@@ -196,7 +210,7 @@ io.on('connection', (socket) => {
       console.log((payload.turnOn ? '' : 'Un-') + 'Subscribed' + (payload.turnOn ? ' to ' : ' from ') + `${payload.deviceId}`);
 
       if (payload.turnOn)   appClient.subscribeToDeviceEvents();
-      else                  appClient.unsubscribeToDeviceEvents();
+      // else                 appClient.unsubscribeToDeviceEvents();
     } else if (!appClient.isConnected && payload.turnOn) {
       devicesToSubscribeTo.push(payload);
     }
@@ -206,11 +220,11 @@ io.on('connection', (socket) => {
 
 
   appClient.on("deviceEvent", function (deviceType, deviceId, eventType, format, payload) {
-    console.log("Selected Device -------->",deviceinfo.deviceId);
+    
     var isAvail = false;
     messages.forEach(function(obj){
-      if (obj.deviceId == deviceId) isAvail = true; 
-      console.log("deviceId ------->", deviceId);
+      if (obj == deviceId) isAvail = true; 
+      
     });
 
     if(isAvail){
@@ -219,9 +233,6 @@ io.on('connection', (socket) => {
     }    
         });
       
-
-
-
 });
 
   

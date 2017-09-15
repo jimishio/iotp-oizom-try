@@ -116,7 +116,18 @@
     </div>
 </div>
 
-{{messages}}
+ <table>
+
+    
+    
+    
+    <tbody>
+        <tr  *ngFor="let obj of messages" >
+            <td >{{ obj | json }}</td>
+        </tr>
+                   
+    </tbody>
+
 
 <div class="container-50 paddingTop">
     <strong *ngIf="this.devices !== undefined && this.devices.length === 0">

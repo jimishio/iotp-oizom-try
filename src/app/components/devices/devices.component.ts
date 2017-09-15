@@ -46,7 +46,8 @@ export class DevicesComponent implements OnInit {
   ngOnInit() {
     this.connection = this.liveDataService.getMessages().subscribe(message => {  
       
-      this.messages.push(message);
+      if(message["type"] == "new_sensorData")
+        this.messages.push(message);
 
       console.log(message)
 
