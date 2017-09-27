@@ -69,7 +69,7 @@
                             <div class="bx--form-item bx--checkbox-wrapper">
                                 <input id="bx--checkbox-{{i}}" class="bx--checkbox" type="checkbox" value="red" name="checkbox"
                                        [(ngModel)]="mqttStatus && liveData[device.deviceId]" [disabled]="!mqttStatus"
-                                       (change)="setLiveData(i, $event.target.checked === true ? true : true);">
+                                       (change)="setLiveData(i, $event.target.checked === true ? true : false);">
 
                                 <label for="bx--checkbox-{{i}}" class="bx--checkbox-label">
                                     <span class="bx--checkbox-appearance">

@@ -112,6 +112,8 @@ export class DevicesComponent implements OnInit {
               console.log("DeviceId matched!!!!")
               device["lastUpdate"] = this.deviceStatus[i].lastUpdate;
               device["currentStatus"] = true;
+              this.liveData[device.deviceId] = true;
+            } else {
             }
           }
 
@@ -271,6 +273,8 @@ export class DevicesComponent implements OnInit {
     };
 
     this.liveDataService.sendMessage('mqtt_set', JSON.stringify(socketData));
+    this.liveDataService.sendMessage('activeDevice', JSON.stringify(this.activeDevice));
+
     
   }
 
