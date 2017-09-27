@@ -7,7 +7,8 @@ const express         = require('express')
       , iotf          = require('ibmiotf');
 
 var io;
-
+let deviceinfo = "";
+let messages = []
 const app = express();
 
 app.use(bodyParser.json());
@@ -103,11 +104,12 @@ appClient.on("disconnect", function () {
 });
 
 // When there's a new device Event
-appClient.on("deviceEvent", function (deviceType, deviceId, eventType, format, payload) {
-    console.log("Device Event from :: " + deviceType + " : " + deviceId + " of event " + eventType + " with payload : " + payload);
-
-    io.emit('message', {type: 'new_sensorData', text: payload.toString(), id:deviceId});
-});
+// appClient.on("deviceEvent", function (deviceType, deviceId, turnOn, eventType, format, payload) {
+    
+//     console.log("this should work ----->", deviceId)
+//     console.log("Device Event from :: " + deviceType + " : " + deviceId + " of event " + eventType + " with payload : " + payload);
+//     io.emit('message', {type: 'new_sensorData', text: payload.toString(), id:deviceId});
+// });
 
 function mqttConnect() {
   try {
@@ -177,21 +179,67 @@ io.on('connection', (socket) => {
     io.emit('message', {type:'mqtt_status', text: {connected: appClient.isConnected}});
   });
 
+  socket.on('activeDevice', (message) =>{
+    console.log("activeDevice -------------->>>> ", message);
+    io.emit('activeDevice', JSON.parse(message));
+  })
+
   socket.on('mqtt_set', (message) => {
     console.log("Set MQTT message: ", message);
 
-    var payload = JSON.parse(message);
+    message = JSON.parse(message)
+    var payload = message;
+
+    if(messages.indexOf(message.deviceId) < 0){
+      if(message.turnOn == true){
+        messages.push(message.deviceId);
+      }
+    }
+   
+    
+    
+    if(messages.indexOf(message.deviceId) >= 0){
+      if(message.turnOn == false){
+        messages.splice(messages.indexOf(message.deviceId),1);
+        console.log(message.deviceId + " removed from list");
+        console.log(messages);
+      }
+    }
+    
+
+    console.log(messages)
+
     
     if (appClient.isConnected) {
       console.log((payload.turnOn ? '' : 'Un-') + 'Subscribed' + (payload.turnOn ? ' to ' : ' from ') + `${payload.deviceId}`);
 
       if (payload.turnOn)   appClient.subscribeToDeviceEvents();
-      else                  appClient.unsubscribeToDeviceEvents();
+      // else                 appClient.unsubscribeToDeviceEvents();
     } else if (!appClient.isConnected && payload.turnOn) {
       devicesToSubscribeTo.push(payload);
     }
-  });
+
+          
+      });
+
+
+  appClient.on("deviceEvent", function (deviceType, deviceId, eventType, format, payload) {
+    
+    var isAvail = false;
+    messages.forEach(function(obj){
+      if (obj == deviceId) isAvail = true; 
+      
+    });
+
+    if(isAvail){
+      console.log("THis is payload: ", payload);
+      io.emit('message', {type: 'new_sensorData', text: payload.toString(), id:deviceId});
+    }    
+        });
+      
 });
+
+  
 /* ===== socket.io client --> END ===== */
 
 //Track Deployment
