@@ -179,6 +179,10 @@ io.on('connection', (socket) => {
     io.emit('message', {type:'mqtt_status', text: {connected: appClient.isConnected}});
   });
 
+  socket.on('activeDevice', (message) =>{
+    console.log("activeDevice -------------->>>> ", message);
+    io.emit('activeDevice', JSON.parse(message));
+  })
 
   socket.on('mqtt_set', (message) => {
     console.log("Set MQTT message: ", message);
